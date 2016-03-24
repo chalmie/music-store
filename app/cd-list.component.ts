@@ -13,6 +13,7 @@ import { ArtistPipe } from './artist.pipe';
   directives: [DisplayCdComponent, NewCdComponent, EditCdComponent],
   template:`
   <select (change)="onChange($event.target.value)" class="filter">
+    <option value="none">Show All</option>
     <option *ngFor="#currentCD of cdList" value="{{currentCD.artist}}">{{currentCD.artist}}</option>
   </select>
   <cd-display *ngFor="#currentCD of cdList | artist:artistFilter"
