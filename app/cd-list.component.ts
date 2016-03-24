@@ -4,19 +4,26 @@ import { CD } from './cd.model';
 import { NewCdComponent } from './new-cd.component';
 import { EditCdComponent } from './edit-cd.component';
 import { ArtistPipe } from './artist.pipe';
+import { GenrePipe } from './genre.pipe';
 
 @Component({
   selector: 'cd-list',
   inputs: ['cdList'],
   outputs: ['onCdSelect'],
-  pipes: [ArtistPipe],
+  pipes: [ArtistPipe, GenrePipe],
   directives: [DisplayCdComponent, NewCdComponent, EditCdComponent],
   template:`
-  <select (change)="onChange($event.target.value)" class="filter">
-    <option value="none">Show All</option>
-    <option *ngFor="#currentCD of cdList" value="{{currentCD.artist}}">{{currentCD.artist}}</option>
-  </select>
-  <cd-display *ngFor="#currentCD of cdList | artist:artistFilter"
+  <div class="sort">
+    <select (change)="onArtistChange($event.target.value)" class="filter">
+      <option value="none">Show All</option>
+      <option *ngFor="#currentCD of cdList" value="{{currentCD.artist}}">{{currentCD.artist}}</option>
+    </select>
+    <select (change)="onGenreChange($event.target.value)" class="filter">
+      <option value="none">Show All</option>
+      <option *ngFor="#currentCD of cdList" value="{{currentCD.genre}}">{{currentCD.genre}}</option>
+    </select>
+  </div>
+  <cd-display *ngFor="#currentCD of cdList | artist:artistFilter | genre:genreFilter"
     (click)="cdClicked(currentCD)"
     [class.selected]="currentCD === selectedCD"
     [cd]="currentCD">
@@ -35,6 +42,7 @@ export class CdListComponent {
   public onCdSelect: EventEmitter<CD>
   public selectedCD: CD;
   public artistFilter: string = 'none';
+  public genreFilter: string = 'none';
   constructor() {
     this.onCdSelect = new EventEmitter();
   }
@@ -47,7 +55,10 @@ export class CdListComponent {
       new CD(newCD.name, newCD.artist, newCD.genre, newCD.price, this.cdList.length)
     );
   }
-  onChange(filterOption) {
+  onArtistChange(filterOption) {
     this.artistFilter = filterOption;
+  }
+  onGenreChange(filterOption) {
+    this.genreFilter = filterOption;
   }
 }
